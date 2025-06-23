@@ -1,0 +1,150 @@
+body {
+  font-family: sans-serif;
+  padding: 20px;
+  background: #f5f5f5;
+}
+
+.app {
+  max-width: 900px;
+  margin: auto;
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.event-form input,
+.event-form button {
+  margin: 5px;
+  padding: 8px;
+}
+
+.calendar-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+  margin-top: 10px;
+}
+
+.day-name {
+  font-weight: bold;
+  text-align: center;
+}
+
+.day-cell {
+  background: #eaeaea;
+  padding: 5px;
+  min-height: 80px;
+  border-radius: 5px;
+  position: relative;
+}
+
+.date-number {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.event {
+  padding: 6px;
+  margin: 4px 0;
+  color: white;
+  border-radius: 4px;
+  font-size: 12px;
+  position: relative;
+}
+
+.event-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.event-actions button {
+  background: none;
+  border: none;
+  margin-left: 5px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.event.strikethrough {
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+
+.event.missed {
+  background-color: #f44336 !important;
+}
+
+.today {
+  border: 2px solid red;
+  background: #fff3f3;
+}
+
+.time-grid {
+  display: flex;
+  width: 100%;
+  border-top: 1px solid #ccc;
+}
+
+.time-column {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  border-left: 1px solid #eee;
+}
+
+.time-slot {
+  height: 40px;
+  border-bottom: 1px solid #f1f1f1;
+  position: relative;
+  padding: 2px;
+}
+
+.time-label {
+  font-size: 12px;
+  color: #888;
+  text-align: right;
+  padding-right: 4px;
+  background-color: #fafafa;
+}
+
+.time-event {
+  font-size: 12px;
+  color: #fff;
+  padding: 2px 4px;
+  border-radius: 4px;
+  position: absolute;
+  left: 4px;
+  top: 2px;
+}
+
+.day-label {
+  font-weight: bold;
+  text-align: center;
+  background: #f0f0f0;
+  padding: 4px 0;
+  border-bottom: 1px solid #ccc;
+}
+
+.event-form {
+  margin-bottom: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.event-form input,
+.event-form select {
+  padding: 0.4rem;
+  font-size: 1rem;
+}
+
+
