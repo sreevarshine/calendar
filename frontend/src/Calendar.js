@@ -80,7 +80,7 @@ const Calendar = ({ events, setEditEvent, deleteEvent, markCompleted, view }) =>
               const isMissed = dayjs().isAfter(dayjs(`${e.date} ${e.endTime}`)) && !e.completed;
               return (
                 <div
-                  key={idx}
+                  key={e.idx}
                   className="event"
                   style={{
                     backgroundColor: isMissed ? "#f44336" : e.color,
@@ -97,8 +97,8 @@ const Calendar = ({ events, setEditEvent, deleteEvent, markCompleted, view }) =>
   }}
 >✏️</button>
 
-                    <button onClick={() => deleteEvent(e.id)}>🗑️</button>
-                    <button onClick={() => markCompleted(e.id)}>✅</button>
+                    <button onClick={() => deleteEvent(e._id)}>🗑️</button>
+                    <button onClick={() => markCompleted(e._id)}>✅</button>
                   </div>
                 </div>
               );

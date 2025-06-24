@@ -1,93 +1,251 @@
-import React, { useState, useEffect } from "react";
-import EventForm from "./EventForm";
-import Calendar from "./Calendar";
+import React, { useState, useEffect } from 'react';
+import Login from './Login';
+import Signup from './Signup';
+import EventForm from './EventForm';
+import Calendar from './Calendar';
+import axios from 'axios';
 
 function App() {
+  const [user, setUser] = useState(null);
+  const [mode, setMode] = useState('login');
   const [events, setEvents] = useState([]);
   const [editEvent, setEditEvent] = useState(null);
-  const [view, setView] = useState("month"); // "day" | "week" | "month"
+  const [view, setView] = useState('month');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  // ✅ Load events from localStorage on mount
+  // Set axios token if user is already logged in
   useEffect(() => {
-    const saved = localStorage.getItem("calendar-events");
-    if (saved) {
-      setEvents(JSON.parse(saved));
+    const token = localStorage.getItem('token');
+    const storedUser = localStorage.getItem('user');
+    if (token && storedUser) {
+      setUser(JSON.parse(storedUser));
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     }
   }, []);
 
-  // ✅ Save events to localStorage on change
+  // Load events once user is set
   useEffect(() => {
-    localStorage.setItem("calendar-events", JSON.stringify(events));
-  }, [events]);
+    if (user) fetchEvents();
+  }, [user]);
 
-  // ✅ Add or Edit Event with Overlap Check
-  const addEvent = (eventData) => {
-    const overlaps = events.some(ev =>
-      ev.date === eventData.date &&
-      ev.startTime === eventData.startTime &&
-      (!editEvent || ev.id !== editEvent.id)
-    );
+  useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => setError(''), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [error]);
 
-    if (overlaps) {
-      alert("⚠️ Overlapping event exists on the same date and time!");
+  const fetchEvents = async () => {
+    setLoading(true);
+    try {
+      const res = await axios.get('http://localhost:5000/api/events');
+      if (res.data.success) {
+        setEvents(res.data.events);
+      } else {
+        setError(res.data.message || 'Failed to fetch events');
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to fetch events');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const addEvent = async (eventData) => {
+    setLoading(true);
+    try {
+      const res = editEvent
+        ? await axios.put(`http://localhost:5000/api/events/${editEvent._id}`, eventData)
+        : await axios.post('http://localhost:5000/api/events', eventData);
+
+      if (res.data.success) {
+        setEvents((prev) =>
+          editEvent
+            ? prev.map((ev) => (ev._id === editEvent._id ? res.data.event : ev))
+            : [...prev, res.data.event]
+        );
+        setEditEvent(null);
+        setError('');
+      } else {
+        setError(res.data.message || 'Failed to save event');
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || 'Error saving event');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const deleteEvent = async (id) => {
+    if (!id) {
+      setError('Invalid event ID');
       return;
     }
 
-    if (editEvent) {
-      // Edit case: update existing event
-      setEvents(prevEvents =>
-        prevEvents.map(ev =>
-          ev.id === editEvent.id ? { ...eventData, id: editEvent.id } : ev
-        )
-      );
-      setEditEvent(null);
-    } else {
-      // New event
-      const newEvent = {
-        ...eventData,
-        id: Date.now(),
-        completed: false,
-      };
-      setEvents([...events, newEvent]);
+    if (!window.confirm('Are you sure you want to delete this event?')) return;
+
+    setLoading(true);
+    try {
+      const res = await axios.delete(`http://localhost:5000/api/events/${id}`);
+      if (res.data.success) {
+        setEvents((prev) => prev.filter((ev) => ev._id !== id));
+        setError('');
+      } else {
+        setError(res.data.message || 'Failed to delete event');
+      }
+    } catch (err) {
+      const msg = err.response?.data?.message || err.message || 'Error deleting event';
+      setError(msg);
+    } finally {
+      setLoading(false);
     }
   };
 
-  // ✅ Delete Event
-  const deleteEvent = (id) => {
-    setEvents(events.filter(event => event.id !== id));
+  const markCompleted = async (id) => {
+    if (!id) {
+      setError('Invalid event ID');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const event = events.find((ev) => ev._id === id);
+      if (!event) throw new Error('Event not found');
+
+      const res = await axios.put(`http://localhost:5000/api/events/${id}`, {
+        completed: !event.completed,
+      });
+
+      if (res.data.success) {
+        setEvents((prev) =>
+          prev.map((ev) =>
+            ev._id === id ? { ...ev, completed: !ev.completed } : ev
+          )
+        );
+        setError('');
+      } else {
+        setError(res.data.message || 'Failed to update event');
+      }
+    } catch (err) {
+      const msg = err.response?.data?.message || err.message || 'Error updating event';
+      setError(msg);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // ✅ Mark Event as Completed
-  const markCompleted = (id) => {
-    setEvents(events.map(ev =>
-      ev.id === id ? { ...ev, completed: true } : ev
-    ));
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    delete axios.defaults.headers.common['Authorization'];
+    setUser(null);
+    setMode('login');
+    setEvents([]);
+    setEditEvent(null);
   };
 
+  // Render login or signup page
+  if (!user) {
+    return (
+      <>
+        {mode === 'login' ? (
+          <Login
+            setUser={setUser}
+            switchToSignup={() => setMode('signup')}
+          />
+        ) : (
+          <Signup
+            setUser={setUser}
+            switchToLogin={() => setMode('login')}
+          />
+        )}
+        {error && (
+          <div
+            style={{
+              color: 'red',
+              textAlign: 'center',
+              marginTop: '10px',
+              background: '#ffe0e0',
+              padding: '10px',
+              borderRadius: '6px',
+            }}
+          >
+            {error}
+          </div>
+        )}
+      </>
+    );
+  }
+
+  // Main App content
   return (
-    <div className="app">
-      <h1>📅 Calendar App</h1>
+    <div className="app" style={{ maxWidth: '1200px', margin: '0 auto', padding: '20px' }}>
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: '16px',
+        borderBottom: '1px solid #e2e8f0',
+        marginBottom: '20px'
+      }}>
+        <span>👋 Welcome, <strong>{user.email}</strong></span>
+        <button onClick={handleLogout}>Logout</button>
+      </div>
 
-      {/* 🔁 View Mode Dropdown */}
-      <div className="view-toggle">
-        <label>View: </label>
-        <select value={view} onChange={(e) => setView(e.target.value)}>
+      <h1 style={{ textAlign: 'center' }}>📅 Calendar App</h1>
+
+      <div className="view-toggle" style={{
+        textAlign: 'center',
+        marginBottom: '20px',
+        padding: '10px',
+        backgroundColor: '#f8f9fa',
+        borderRadius: '5px'
+      }}>
+        <label style={{ marginRight: '8px' }}>View:</label>
+        <select
+          value={view}
+          onChange={(e) => setView(e.target.value)}
+          style={{ padding: '5px', borderRadius: '4px' }}
+        >
           <option value="day">Day</option>
           <option value="week">Week</option>
           <option value="month">Month</option>
         </select>
       </div>
 
-      {/* 📝 Event Form */}
-      <EventForm onAddEvent={addEvent} editEvent={editEvent} />
+      {error && (
+        <div style={{
+          color: 'red',
+          padding: '10px',
+          margin: '10px 0',
+          backgroundColor: '#ffebee',
+          borderRadius: '4px'
+        }}>
+          {error}
+        </div>
+      )}
 
-      {/* 📅 Calendar Component */}
+      {loading && (
+        <div style={{ textAlign: 'center', padding: '20px' }}>
+          Loading...
+        </div>
+      )}
+
+      <EventForm
+        onAddEvent={addEvent}
+        editEvent={editEvent}
+        setError={setError}
+        loading={loading}
+      />
+
       <Calendar
         events={events}
         setEditEvent={setEditEvent}
         deleteEvent={deleteEvent}
         markCompleted={markCompleted}
         view={view}
+        loading={loading}
       />
     </div>
   );
