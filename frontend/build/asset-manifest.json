@@ -1,13 +1,15 @@
 {
   "files": {
-    "main.css": "/sreevarshine/calendar.git/static/css/main.14996b97.css",
-    "main.js": "/sreevarshine/calendar.git/static/js/main.4e6e4cb1.js",
+    "main.css": "/sreevarshine/calendar.git/static/css/main.4d40dec4.css",
+    "main.js": "/sreevarshine/calendar.git/static/js/main.8c7ba99a.js",
+    "static/media/signup-illustration.jpg": "/sreevarshine/calendar.git/static/media/signup-illustration.7ad401d9d0bad0d0d2a3.jpg",
+    "static/media/login-illustration.png": "/sreevarshine/calendar.git/static/media/login-illustration.b5b25746b64a53143dbd.png",
     "index.html": "/sreevarshine/calendar.git/index.html",
-    "main.14996b97.css.map": "/sreevarshine/calendar.git/static/css/main.14996b97.css.map",
-    "main.4e6e4cb1.js.map": "/sreevarshine/calendar.git/static/js/main.4e6e4cb1.js.map"
+    "main.4d40dec4.css.map": "/sreevarshine/calendar.git/static/css/main.4d40dec4.css.map",
+    "main.8c7ba99a.js.map": "/sreevarshine/calendar.git/static/js/main.8c7ba99a.js.map"
   },
   "entrypoints": [
-    "static/css/main.14996b97.css",
-    "static/js/main.4e6e4cb1.js"
+    "static/css/main.4d40dec4.css",
+    "static/js/main.8c7ba99a.js"
   ]
 }
