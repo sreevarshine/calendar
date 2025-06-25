@@ -1,8 +1,9 @@
-const express = require('express');
+import express from 'express';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import User from '../models/User.js'; // Note the .js extension
 const router = express.Router();
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const User = require('../models/User'); // your Mongoose user model
+
 const JWT_SECRET = process.env.JWT_SECRET || "dev_secret";
 
 // Signup
@@ -45,4 +46,4 @@ router.post('/logout', (req, res) => {
   res.status(200).json({ message: "Logged out successfully" });
 });
 
-module.exports = router;
+export default router;

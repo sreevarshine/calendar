@@ -1,9 +1,11 @@
-const express = require('express');
+import express from 'express';
+import mongoose from 'mongoose';
+import dayjs from 'dayjs';
+
+import Event from '../models/Event.js'; // 🔔 include .js extension in ESM
+import authMiddleware from '../middleware/auth.js';
+
 const router = express.Router();
-const mongoose = require('mongoose');
-const Event = require('../models/Event');
-const authMiddleware = require('../middleware/auth');
-const dayjs = require('dayjs'); // Make sure it's installed: npm install dayjs
 
 // Helper function for consistent error responses
 const errorResponse = (res, status, message, error = null) => {
@@ -108,4 +110,4 @@ router.delete('/:id', authMiddleware, async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

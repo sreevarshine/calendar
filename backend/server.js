@@ -1,30 +1,35 @@
-// server.js
-require("dotenv").config();
-const express = require("express");
-const cors = require("cors");
-const mongoose = require("mongoose");
-const path = require("path");
+  import { configDotenv } from "dotenv";
+  configDotenv(); // Load .env file
 
-const authRoutes = require("./routes/auth");
-const eventRoutes = require("./routes/events");
+  import express from "express";
+  import cors from "cors";
+  import mongoose from "mongoose";
+  import path from "path";
+  import { fileURLToPath } from "url";
 
-const app = express();
-app.use(cors());
-app.use(express.json());
+  import authRoutes from "./routes/auth.js";
+  import eventRoutes from "./routes/events.js";
 
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log("✅ MongoDB connected"))
-  .catch((err) => console.error("❌ MongoDB error:", err));
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = path.dirname(__filename);
 
-app.use("/api/auth", authRoutes);
-app.use("/api/events", eventRoutes);
+  const app = express();
+  app.use(cors());
+  app.use(express.json());
 
-if (process.env.NODE_ENV === "production") {
-  const buildPath = path.join(__dirname, "../frontend/build");
-  app.use(express.static(buildPath));
-  app.get("*", (req, res) =>
-    res.sendFile(path.join(buildPath, "index.html"))
-  );
-}
+  mongoose.connect(process.env.MONGO_URI)
+    .then(() => console.log("✅ MongoDB connected"))
+    .catch((err) => console.error("❌ MongoDB error:", err));
 
-module.exports = app; // ✅ Do not use app.listen
+  app.use("/api/auth", authRoutes);
+  app.use("/api/events", eventRoutes);
+
+  if (process.env.NODE_ENV === "production") {
+    const buildPath = path.join(__dirname, "../frontend/build");
+    app.use(express.static(buildPath));
+    app.get("*", (req, res) =>
+      res.sendFile(path.join(buildPath, "index.html"))
+    );
+  }
+
+  export default app; // ✅ Do not use app.listen
