@@ -6,7 +6,7 @@
   "scripts": {
   "build": "echo 'No build step for backend'",
   "dev": "nodemon dev.js",
-  "start": "node server.js"
+  "start": "nodemon server.js"
 },
   "dependencies": {
     "bcrypt": "^6.0.0",
