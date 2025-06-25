@@ -4,9 +4,10 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
-    "start": "node server.js",
-    "build": "cd ../frontend && npm install && npm run build"
-  },
+  "build": "echo 'No build step for backend'",
+  "dev": "nodemon server.js",
+  "start": "node server.js"
+},
   "dependencies": {
     "bcrypt": "^6.0.0",
     "bcryptjs": "^3.0.2",
