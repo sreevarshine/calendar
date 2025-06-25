@@ -10,6 +10,9 @@ import { fileURLToPath } from "url";
 import authRoutes from "./routes/auth.js";
 import eventRoutes from "./routes/events.js";
 
+import authMiddleware from "./middleware/auth.js";
+
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -23,6 +26,6 @@ mongoose
   .catch((err) => console.error("❌ MongoDB error:", err));
 
 app.use("/api/auth", authRoutes);
-app.use("/api/events", eventRoutes);
+app.use("/api/events", authMiddleware, eventRoutes);
 
 export default app;
