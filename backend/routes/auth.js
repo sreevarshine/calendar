@@ -1,21 +1,26 @@
-import express from 'express';
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
-import User from '../models/User.js'; // Note the .js extension
+import express from "express";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import User from "../models/User.js"; // Note the .js extension
 const router = express.Router();
 
-const JWT_SECRET = process.env.JWT_SECRET || "dev_secret";
-
 // Signup
-router.post('/signup', async (req, res) => {
+router.post("/signup", async (req, res) => {
   const { email, password } = req.body;
   try {
     const existingUser = await User.findOne({ email });
-    if (existingUser) return res.status(400).json({ message: "User already exists" });
+    if (existingUser)
+      return res.status(400).json({ message: "User already exists" });
 
     const hashed = await bcrypt.hash(password, 10);
     const user = await User.create({ email, password: hashed });
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
+
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "1d",
+    });
+
+    // ✅ Set the Authorization header for future axios requests
+    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
     res.status(201).json({ token, user });
   } catch (err) {
@@ -24,7 +29,7 @@ router.post('/signup', async (req, res) => {
 });
 
 // Login
-router.post('/login', async (req, res) => {
+router.post("/login", async (req, res) => {
   const { email, password } = req.body;
   try {
     const user = await User.findOne({ email });
@@ -32,8 +37,10 @@ router.post('/login', async (req, res) => {
 
     const match = await bcrypt.compare(password, user.password);
     if (!match) return res.status(400).json({ message: "Invalid credentials" });
-    
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
+
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "1d",
+    });
 
     res.status(200).json({ token, user });
   } catch (err) {
@@ -42,7 +49,7 @@ router.post('/login', async (req, res) => {
 });
 
 // Logout (optional route)
-router.post('/logout', (req, res) => {
+router.post("/logout", (req, res) => {
   res.status(200).json({ message: "Logged out successfully" });
 });
 
