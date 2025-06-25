@@ -39,7 +39,7 @@ function App() {
   const fetchEvents = async () => {
     setLoading(true);
     try {
-      const res = await axios.get('http://localhost:5000/api/events');
+      const res = await axios.get('https://calendar-backend-six-phi.vercel.app/api/events');
       if (res.data.success) {
         setEvents(res.data.events);
       } else {
@@ -56,8 +56,8 @@ function App() {
     setLoading(true);
     try {
       const res = editEvent
-        ? await axios.put(`http://localhost:5000/api/events/${editEvent._id}`, eventData)
-        : await axios.post('http://localhost:5000/api/events', eventData);
+        ? await axios.put(`https://calendar-backend-six-phi.vercel.app/api/events/${editEvent._id}`, eventData)
+        : await axios.post('https://calendar-backend-six-phi.vercel.app/api/events', eventData);
 
       if (res.data.success) {
         setEvents((prev) =>
@@ -87,7 +87,7 @@ function App() {
 
     setLoading(true);
     try {
-      const res = await axios.delete(`http://localhost:5000/api/events/${id}`);
+      const res = await axios.delete(`https://calendar-backend-six-phi.vercel.app/api/events/${id}`);
       if (res.data.success) {
         setEvents((prev) => prev.filter((ev) => ev._id !== id));
         setError('');
@@ -113,7 +113,7 @@ function App() {
       const event = events.find((ev) => ev._id === id);
       if (!event) throw new Error('Event not found');
 
-      const res = await axios.put(`http://localhost:5000/api/events/${id}`, {
+      const res = await axios.put(`https://calendar-backend-six-phi.vercel.app/api/events/${id}`, {
         completed: !event.completed,
       });
 

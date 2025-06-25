@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 const instance = axios.create({
-  baseURL: 'http://localhost:5000', // your backend server
+  baseURL: 'https://calendar-backend-six-phi.vercel.app', // your backend server
 });
 
 // Automatically attach JWT token from localStorage to every request

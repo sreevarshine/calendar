@@ -36,7 +36,7 @@ const AddEvent = ({ token, onEventAdded }) => {
     setIsLoading(true);
 
     try {
-      const res = await fetch('http://localhost:5000/api/events/', {
+      const res = await fetch('https://calendar-backend-six-phi.vercel.app/api/events/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

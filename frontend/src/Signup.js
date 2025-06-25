@@ -11,7 +11,7 @@ function Signup({ setUser, switchToLogin }) {
   const signup = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('http://localhost:5000/api/auth/signup', { email, password });
+      const res = await axios.post('https://calendar-backend-six-phi.vercel.app/api/auth/signup', { email, password });
       localStorage.setItem('token', res.data.token);
       localStorage.setItem('user', JSON.stringify(res.data.user));
       setUser(res.data.user);
