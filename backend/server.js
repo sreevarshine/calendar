@@ -25,7 +25,7 @@ mongoose
   .then(() => console.log("✅ MongoDB connected"))
   .catch((err) => console.error("❌ MongoDB error:", err));
 
-app.use("/api/auth", authMiddleware, authRoutes);
-app.use("/api/events", authMiddleware, eventRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/events", eventRoutes);
 
 export default app;
